@@ -75,4 +75,58 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
             }
         }
     }
+
+    data class DSWNode(var i : Int, val state : DSWState = DSWState()) {
+
+        private var next : DSWNode? = null
+
+        private var prev : DSWNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < nodes - 1) {
+                next = DSWNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val gap : Float = w / nodes
+            val getScale : (Int) -> Float = {i -> Math.min(i * 1f / 3, Math.max(0f, state.scale - (i * 1f) / 3)) * 3f}
+            canvas.save()
+            canvas.translate(i * gap, h/2)
+            canvas.drawLine(0f, -gap * getScale(0), 0f, -gap, paint)
+            canvas.drawLine(gap * getScale(1), -gap, gap, -gap, paint)
+            canvas.drawLine(gap, -gap + gap * getScale(2),gap, 0f, paint)
+            canvas.restore()
+            next?.draw(canvas, paint)
+        }
+
+        fun update(stopcb : (Int, Float) -> Unit) {
+            state.update {
+                stopcb(i, it)
+            }
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : DSWNode {
+            var curr : DSWNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr 
+            }
+            cb()
+            return this
+        }
+    }
 }
