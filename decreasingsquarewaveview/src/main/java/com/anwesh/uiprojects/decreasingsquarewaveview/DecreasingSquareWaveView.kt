@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.content.Context
+import android.graphics.Color
 
 val nodes : Int = 5
 class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
@@ -97,6 +98,7 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
             val w : Float = canvas.width.toFloat()
             val h : Float = canvas.height.toFloat()
             val gap : Float = w / nodes
+            paint.strokeWidth = Math.min(w, h) / 60
             val getScale : (Int) -> Float = {i -> Math.min(i * 1f / 3, Math.max(0f, state.scale - (i * 1f) / 3)) * 3f}
             canvas.save()
             canvas.translate(i * gap, h/2)
@@ -123,10 +125,36 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
                 curr = next
             }
             if (curr != null) {
-                return curr 
+                return curr
             }
             cb()
             return this
+        }
+    }
+
+    data class DecreasingSquareWave(var i : Int) {
+
+        private var curr : DSWNode = DSWNode(0)
+
+        private var dir : Int = 1
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            paint.color = Color.parseColor("#2E7D32")
+            paint.strokeCap = Paint.Cap.ROUND
+            curr.draw(canvas, paint)
+        }
+
+        fun update(stopcb : (Int, Float) -> Unit) {
+            curr.update {i, scale ->
+                curr = curr.getNext(dir) {
+                    dir *= -1
+                }
+                stopcb(i, scale)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            curr.startUpdating(cb)
         }
     }
 }
