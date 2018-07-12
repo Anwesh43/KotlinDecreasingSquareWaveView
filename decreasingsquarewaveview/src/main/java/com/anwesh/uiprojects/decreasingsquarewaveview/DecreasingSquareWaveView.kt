@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.decreasingsquarewaveview
  * Created by anweshmishra on 12/07/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.view.MotionEvent
 import android.graphics.Canvas
@@ -184,6 +185,15 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
             dsw.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object{
+
+        fun create(activity : Activity) : DecreasingSquareWaveView {
+            val view : DecreasingSquareWaveView = DecreasingSquareWaveView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
