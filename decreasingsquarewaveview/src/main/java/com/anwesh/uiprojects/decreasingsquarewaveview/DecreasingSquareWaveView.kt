@@ -47,4 +47,32 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
             }
         }
     }
+
+    data class DSWAnimator(var view : View, var animated : Boolean = false) {
+
+        fun start() {
+            if (!animated) {
+                animated = true
+                view.postInvalidate()
+            }
+        }
+
+        fun stop() {
+            if (animated) {
+                animated = false
+            }
+        }
+
+        fun animate(cb : () -> Unit) {
+            if (animated) {
+                cb()
+                try {
+                    Thread.sleep(50)
+                    view.invalidate()
+                } catch(ex : Exception) {
+
+                }
+            }
+        }
+    }
 }
