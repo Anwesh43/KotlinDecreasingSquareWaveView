@@ -102,9 +102,10 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
             val h : Float = canvas.height.toFloat()
             val gap : Float = w / nodes
             paint.strokeWidth = Math.min(w, h) / 60
-            val getScale : (Int) -> Float = {i -> Math.min(i * 1f / 3, Math.max(0f, state.scale - (i * 1f) / 3)) * 3f}
+            val getScale : (Int) -> Float = {i -> Math.min(1f / 3, Math.max(0f, state.scale - (i * 1f) / 3)) * 3f}
             canvas.save()
             canvas.translate(i * gap, h/2)
+            canvas.scale(1f,1f - 2 * (i % 2))
             canvas.drawLine(0f, -gap * getScale(0), 0f, -gap, paint)
             canvas.drawLine(gap * getScale(1), -gap, gap, -gap, paint)
             canvas.drawLine(gap, -gap + gap * getScale(2),gap, 0f, paint)
