@@ -157,4 +157,31 @@ class DecreasingSquareWaveView (ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : DecreasingSquareWaveView) {
+
+        private var dsw : DecreasingSquareWave = DecreasingSquareWave(0)
+
+        private var animator : DSWAnimator = DSWAnimator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#BDBDBD"))
+            dsw.draw(canvas, paint)
+            animator.animate {
+                dsw.update {j, scale ->
+                    animator.stop()
+                    when (scale) {
+                        1f -> {}
+                        0f -> {}
+                    }
+                }
+            }
+        }
+
+        fun handleTap() {
+            dsw.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
